@@ -6,18 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
-import org.springframework.graphql.data.method.annotation.SchemaMapping;
 import org.springframework.stereotype.Controller;
 
 import edu.fra.uas.model.Event;
 import edu.fra.uas.service.EventService;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
-@SchemaMapping(typeName = "Event")
 public class EventController {
 
     private static final Logger log = LoggerFactory.getLogger(EventController.class);
@@ -26,21 +23,25 @@ public class EventController {
     private EventService eventService;
 
     // Fetch all events
-    @QueryMapping(name = "allEvents")
+    @QueryMapping
     public List<Event> getAllEvents() {
-        log.debug("getAllEvents() is called");
-        return new ArrayList<>(eventService.getAllEvents());
+        log.info("Fetching all events");
+        return eventService.getAllEvents().stream().toList();
     }
 
     // Fetch a specific event by ID
-    @QueryMapping(name = "eventById")
+    @QueryMapping
     public Event getEventById(@Argument String id) {
-        log.debug("getEventById() is called with id: " + id);
-        return eventService.getEventById(id);
+        log.info("Fetching event by ID: {}", id);
+        Event event = eventService.getEventById(id);
+        if (event == null) {
+            log.warn("Event with ID {} not found", id);
+        }
+        return event;
     }
 
     // Add a new event
-    @MutationMapping(name = "addEvent")
+    @MutationMapping
     public Event addEvent(
         @Argument String id,
         @Argument String title,
@@ -48,18 +49,13 @@ public class EventController {
         @Argument String startTime,
         @Argument String endTime
     ) {
-        log.debug("addEvent() is called");
-        Event event = new Event();
-        event.setId(id);
-        event.setTitle(title);
-        event.setDescription(description);
-        event.setStartTime(LocalDateTime.parse(startTime));
-        event.setEndTime(LocalDateTime.parse(endTime));
+        log.info("Adding new event with ID: {}", id);
+        Event event = new Event(id, title, description, LocalDateTime.parse(startTime), LocalDateTime.parse(endTime));
         return eventService.addEvent(event);
     }
 
     // Update an existing event
-    @MutationMapping(name = "updateEvent")
+    @MutationMapping
     public Event updateEvent(
         @Argument String id,
         @Argument String title,
@@ -67,38 +63,19 @@ public class EventController {
         @Argument String startTime,
         @Argument String endTime
     ) {
-        log.debug("updateEvent() is called with id: " + id);
-        Event event = eventService.getEventById(id);
-        if (event == null) {
-            log.error("Event with id " + id + " not found");
-            return null;
-        }
-        if (title != null && !title.isEmpty()) {
-            event.setTitle(title);
-        }
-        if (description != null && !description.isEmpty()) {
-            event.setDescription(description);
-        }
-        if (startTime != null && !startTime.isEmpty()) {
-            event.setStartTime(LocalDateTime.parse(startTime));
-        }
-        if (endTime != null && !endTime.isEmpty()) {
-            event.setEndTime(LocalDateTime.parse(endTime));
-        }
-        return eventService.addEvent(event);
+        log.info("Updating event with ID: {}", id);
+        Event event = new Event(id, title, description, LocalDateTime.parse(startTime), LocalDateTime.parse(endTime));
+        return eventService.updateEvent(event);
     }
 
     // Delete an event
-    @MutationMapping(name = "deleteEvent")
+    @MutationMapping
     public Boolean deleteEvent(@Argument String id) {
-        log.debug("deleteEvent() is called with id: " + id);
-        Event event = eventService.removeEvent(id);
-        if (event == null) {
-            log.error("Event with id " + id + " not found");
-            return false;
-        } else {
-            log.debug("Event with id " + id + " deleted");
-            return true;
+        log.info("Deleting event with ID: {}", id);
+        boolean deleted = eventService.removeEvent(id) != null;
+        if (!deleted) {
+            log.warn("Failed to delete event with ID {}", id);
         }
+        return deleted;
     }
 }

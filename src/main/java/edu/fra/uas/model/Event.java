@@ -4,26 +4,17 @@ import java.time.LocalDateTime;
 
 public class Event {
 
-    // ID des Events
     private String id;
-
-    // Titel des Events
     private String title;
-
-    // Beschreibung des Events
     private String description;
-
-    // Startzeit des Events
     private LocalDateTime startTime;
-
-    // Endzeit des Events
     private LocalDateTime endTime;
 
-    // Standardkonstruktor
+    // Default constructor
     public Event() {
     }
 
-    // Parameterisierter Konstruktor
+    // Parameterized constructor
     public Event(String id, String title, String description, LocalDateTime startTime, LocalDateTime endTime) {
         this.id = id;
         this.title = title;
@@ -32,7 +23,7 @@ public class Event {
         this.endTime = endTime;
     }
 
-    // Getter und Setter für ID
+    // Getters and Setters
     public String getId() {
         return id;
     }
@@ -41,7 +32,6 @@ public class Event {
         this.id = id;
     }
 
-    // Getter und Setter für Titel
     public String getTitle() {
         return title;
     }
@@ -50,7 +40,6 @@ public class Event {
         this.title = title;
     }
 
-    // Getter und Setter für Beschreibung
     public String getDescription() {
         return description;
     }
@@ -59,7 +48,6 @@ public class Event {
         this.description = description;
     }
 
-    // Getter und Setter für Startzeit
     public LocalDateTime getStartTime() {
         return startTime;
     }
@@ -68,7 +56,6 @@ public class Event {
         this.startTime = startTime;
     }
 
-    // Getter und Setter für Endzeit
     public LocalDateTime getEndTime() {
         return endTime;
     }
@@ -77,7 +64,6 @@ public class Event {
         this.endTime = endTime;
     }
 
-    // toString-Methode für Debugging und Logging
     @Override
     public String toString() {
         return "Event{" +
