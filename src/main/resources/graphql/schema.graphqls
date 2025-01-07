@@ -1,0 +1,27 @@
+type Event {
+    id: ID!
+    title: String!
+    description: String
+    startTime: String!
+    endTime: String!
+}
+
+type Query {
+    getAllEvents: [Event]
+    getEventById(id: ID!): Event
+}
+
+type Mutation {
+    addEvent(
+        id: ID!,
+        title: String!,
+        description: String,
+        startTime: String!,
+        endTime: String!
+    ): Event
+    removeEvent(id: ID!): Event
+}
+
+type Subscription {
+    eventAdded: Event
+}
